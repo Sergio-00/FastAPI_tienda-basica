@@ -20,6 +20,22 @@ La aplicación implementa una **API REST** organizada con **APIRouter**, validac
 - `PUT /categorias/{id}` → actualizar una categoría
 - `DELETE /categorias/{id}` → eliminar una categoría
 
+### Usuarios
+
+- `GET /usuarios` → listar usuarios
+- `GET /usuarios/{id}` → obtener un usuario
+- `POST /usuarios` → crear un usuario
+- `PUT /usuarios/{id}` → actualizar un usuario
+- `DELETE /usuarios/{id}` → eliminar un usuario
+
+### Administradores
+
+- `GET /administradores` → listar administradores
+- `GET /administradores/{id}` → obtener un administrador
+- `POST /administradores` → crear un administrador
+- `PUT /administradores/{id}` → actualizar un administrador
+- `DELETE /administradores/{id}` → eliminar un administrador
+
 ---
 
 ## Instalación
@@ -96,5 +112,26 @@ http://127.0.0.1:8000/docs
 ```json
 {
   "nombre": "Consolas"
+}
+```
+
+### Crear un usuario
+
+```json
+{
+  "nombre": "usuario",
+  "correo": "usuario@correo.com",
+  "clave": "clave123"
+}
+```
+
+### Crear un administrador
+
+```json
+{
+  "nombre": "Admin",
+  "correo": "admin@correo.com",
+  "clave": "pass123",
+  "nivel_permiso": "superadmin"
 }
 ```

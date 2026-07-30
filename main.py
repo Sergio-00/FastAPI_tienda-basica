@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import productos, categorias
+from routers import productos, categorias, usuarios, administradores
 
 app = FastAPI(
     title="API de la Tienda",
@@ -11,6 +11,8 @@ app = FastAPI(
 # Conectamos los routers de cada recurso
 app.include_router(productos.router)
 app.include_router(categorias.router)
+app.include_router(usuarios.router)
+app.include_router(administradores.router)
 
 
 @app.get("/", tags=["Inicio"])
