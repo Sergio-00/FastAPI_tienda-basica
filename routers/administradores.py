@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
+import seguridad
 
 router = APIRouter(prefix="/administradores", tags=["Administradores"])
 
@@ -50,7 +51,10 @@ def obtener_administrador(administrador_id: int):
 
 
 @router.post("", status_code=201)
-def crear_administrador(datos: AdministradorEntrada):
+def crear_administrador(
+    datos: AdministradorEntrada,
+    usuario_actual: dict = Depends(seguridad.obtener_usuario_actual),
+):
     nuevo_id = max((a["id"] for a in administradores), default=0) + 1
 
     nuevo_administrador = {
@@ -64,11 +68,16 @@ def crear_administrador(datos: AdministradorEntrada):
     return {
         "mensaje": "Administrador creado",
         "administrador": nuevo_administrador,
+        "creado_por": usuario_actual["username"],
     }
 
 
 @router.put("/{administrador_id}")
-def actualizar_administrador(administrador_id: int, datos: AdministradorEntrada):
+def actualizar_administrador(
+    administrador_id: int,
+    datos: AdministradorEntrada,
+    usuario_actual: dict = Depends(seguridad.obtener_usuario_actual),
+):
     for administrador in administradores:
         if administrador["id"] == administrador_id:
             administrador["nombre"] = datos.nombre
@@ -78,17 +87,21 @@ def actualizar_administrador(administrador_id: int, datos: AdministradorEntrada)
             return {
                 "mensaje": "Administrador actualizado",
                 "administrador": administrador,
+                "creado_por": usuario_actual["username"],
             }
     raise HTTPException(status_code=404, detail="Administrador no encontrado")
 
 
 @router.delete("/{administrador_id}")
-def eliminar_administrador(administrador_id: int):
+def eliminar_administrador(
+    administrador_id: int, admin: dict = Depends(seguridad.requerir_admin)
+):
     for administrador in administradores:
         if administrador["id"] == administrador_id:
             administradores.remove(administrador)
             return {
                 "mensaje": "Administrador eliminado",
                 "administrador": administrador,
+                "eliminado_por": admin["username"],
             }
     raise HTTPException(status_code=404, detail="Administrador no encontrado")
