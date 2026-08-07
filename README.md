@@ -38,6 +38,34 @@ La aplicación implementa una **API REST** organizada con **APIRouter**, validac
 
 ---
 
+## Seguridad y autenticación JWT
+
+Se añadió autenticación basada en JWT (JSON Web Token) a la API de la tienda.
+
+### Funcionalidades implementadas
+
+- Login mediante POST /auth/login.
+- Generación de tokens JWT con expiración de 30 minutos.
+- Contraseñas protegidas usando bcrypt (hashing).
+- Endpoint protegido GET /auth/yo para consultar el usuario autenticado.
+- Protección de operaciones sensibles con Depends() y OAuth2PasswordBearer.
+
+### Permisos aplicados
+
+- GET → acceso público.
+- POST y PUT → requieren un usuario autenticado.
+- DELETE → requiere rol admin.
+
+### Flujo de uso
+
+1. El usuario envía sus credenciales a /auth/login.
+2. El servidor valida la contraseña usando bcrypt.
+3. Si son correctas, se genera un JWT.
+4. El token se envía desde Authorize en /docs.
+5. Las rutas protegidas verifican el token antes de permitir la operación.
+
+---
+
 ## Instalación
 
 ### 1. Clonar el repositorio
