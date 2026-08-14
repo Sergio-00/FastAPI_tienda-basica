@@ -1,5 +1,7 @@
+import sqlite3
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
+from database import obtener_conexion
 from models.modelos import RegistroEntrada
 import seguridad
 
@@ -9,25 +11,38 @@ router = APIRouter(prefix="/auth", tags=["Autenticacion"])
 @router.post("/registro", status_code=201)
 def registrar_usuario(datos: RegistroEntrada):
 
-    # Verificar si el usuario ya existe
-    if seguridad.buscar_usuario(datos.username):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+
+    try:
+        cursor.execute(
+            """
+            INSERT INTO usuarios (username, nombre, password, rol)
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                datos.username,
+                datos.nombre,
+                seguridad.hashear_password(datos.password),
+                "cliente",
+            ),
+        )
+
+        conexion.commit()
+
+    except sqlite3.IntegrityError:
+        conexion.close()
+
         raise HTTPException(status_code=400, detail="El usuario ya existe")
 
-    nuevo_usuario = {
-        "username": datos.username,
-        "nombre": datos.nombre,
-        "password": seguridad.hashear_password(datos.password),
-        "rol": "cliente",
-    }
-
-    seguridad.usuarios.append(nuevo_usuario)
+    conexion.close()
 
     return {
         "mensaje": "Usuario registrado correctamente",
         "usuario": {
-            "username": nuevo_usuario["username"],
-            "nombre": nuevo_usuario["nombre"],
-            "rol": nuevo_usuario["rol"],
+            "username": datos.username,
+            "nombre": datos.nombre,
+            "rol": "cliente",
         },
     }
 
