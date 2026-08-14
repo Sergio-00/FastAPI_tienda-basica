@@ -1,15 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import BaseModel
+from models.modelos import RegistroEntrada
 import seguridad
 
 router = APIRouter(prefix="/auth", tags=["Autenticacion"])
-
-
-class RegistroEntrada(BaseModel):
-    username: str
-    nombre: str
-    password: str
 
 
 @router.post("/registro", status_code=201)

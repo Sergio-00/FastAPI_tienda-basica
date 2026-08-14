@@ -1,14 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel
+from models.modelos import UsuarioEntrada
 import seguridad
 
 router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
-
-
-class UsuarioEntrada(BaseModel):
-    nombre: str
-    correo: str
-    clave: str
 
 
 usuarios = [
